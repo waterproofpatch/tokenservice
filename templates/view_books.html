@@ -1,0 +1,19 @@
+{% extends "index.html" %} {% block head %} {{ super() }}
+<b>View Books</b> <br> {% endblock %} {% block content %}
+<button id="button">Click me!</button><br>
+<div id="div1"> Click above to get book listing... </div>
+
+<script type="text/javascript">
+    // Assign handlers immediately after making the request,
+    // and remember the jqxhr object for this request
+    $(document).ready(function () {
+        $("button").click(function () {
+            $.ajax({
+                url: "json_get_books", success: function (result) {
+                    $("#div1").html(result);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

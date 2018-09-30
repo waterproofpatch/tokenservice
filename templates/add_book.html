@@ -1,0 +1,16 @@
+{% extends "index.html" %} {% block head %} {{ super() }}
+<b>Add Book</b><br>
+{% endblock %}
+
+{% block content %} {{ super() }}
+{% if status %}
+{{ status }}
+{% endif %}
+<form id="addbookform" action="/proc_add_book" method="POST">
+<input name="isbn" value="" placeholder="ISBN"></input>
+<input name="title" value="" placeholder="Title"></input>
+<input name="author" value="" placeholder="Author"></input>
+<input name="price" value="" placeholder="Price"></input>
+<input type="submit" value="Add"></input>
+</form>
+{% endblock %}
