@@ -15,7 +15,7 @@ from database import Database
 APP = Flask(__name__)
 
 # make a LOGGER
-LOGGER = logging.getLogger("keeme")
+LOGGER = logging.getLogger("tokenservice")
 LOGGER.setLevel(logging.INFO)
 
 # create a FORMATTER
@@ -39,13 +39,6 @@ LOGGER.addHandler(FILE_HANDLER)
 DB = Database()
 
 API_KEY_LEN = 32
-
-@APP.route("/")
-def api_index():
-    '''
-	Get the homepage
-	'''
-    return render_template("index.html")
 
 @APP.route("/get_token", methods=['GET'])
 def get_api_get():
