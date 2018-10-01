@@ -5,7 +5,8 @@ Allows users to generate secret tokens they may use to exchange data with other 
 ## Installation (using virtualenv)
 
 ```bash
-pip3 -m virtualenv venv
+pip3 install virtualenv
+python3 -m virtualenv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
@@ -34,3 +35,11 @@ pip install -r requirements.txt
 
     ```python
     requests.post("http://127.0.0.1:5000/poll", json=json.dumps({"token":"77d5e805d51b0cdc4088b1b5dde12c519241bb90e98b787023c33f63064d1774"})).json()
+
+## Test
+
+To run the unit tests:
+
+```bash
+pytest
+```

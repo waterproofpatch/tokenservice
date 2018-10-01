@@ -18,7 +18,7 @@ from flask import redirect
 import utils
 import models
 
-APP = Flask(__name__)
+app = Flask(__name__)
 
 # make a LOGGER
 LOGGER = logging.getLogger("tokenservice")
@@ -48,7 +48,7 @@ session = DBsession()
 
 API_KEY_LEN = 32
 
-@APP.route("/get_token", methods=['GET'])
+@app.route("/get_token", methods=['GET'])
 def get_api_get():
     '''
     Generate and return an token in json format after adding it to
@@ -62,7 +62,7 @@ def get_api_get():
 
     return jsonify({"token": token_string})
 
-@APP.route("/put", methods=['POST'])
+@app.route("/put", methods=['POST'])
 def put():
     '''
     Handle a put to add data for a particular token
@@ -79,7 +79,7 @@ def put():
 
     return jsonify({"did_insert": True})
 
-@APP.route("/poll", methods=['POST'])
+@app.route("/poll", methods=['POST'])
 def poll():
     '''
     Handle a poll for data for a particular token
@@ -89,11 +89,9 @@ def poll():
     result = session.query(models.Token).filter(models.Token.token==token).one()
     return jsonify(result.data)
 
-def start():
-    APP.run()
-
 def stop():
+    LOGGER.info("App stopping...")
     pass
 
 if __name__ == "__main__":
-    start()
+    app.run()
