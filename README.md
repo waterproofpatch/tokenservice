@@ -29,7 +29,7 @@ pip install -r requirements.txt
 
 3. Put some data for a token:
 
-    ```python
+    ```bash
     curl --header "Content-Type: application/json" --data '{"token": "ae74934b75b0a388bd8194aff3f565dcf2a0ca8eec980b0eddf464af55744891", "data": "some data"}' http://localhost:5000/put
     ...
     {"did_insert":true}
