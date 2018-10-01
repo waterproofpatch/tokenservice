@@ -17,7 +17,7 @@ def test_put_valid_token(client):
     response = client.get('/get_token')
     assert response.status == '200 OK'
     assert json.loads(response.data.decode())['token'] is not None
-    assert len(json.loads(response.data.decode())['token']) == 64
+    assert len(json.loads(response.data.decode())['token']) == 32
 
     token = json.loads(response.data.decode())['token']
 

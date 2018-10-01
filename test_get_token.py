@@ -16,7 +16,7 @@ def test_get_new_token(client):
     response = client.get('/get_token')
     assert response.status == '200 OK'
     assert json.loads(response.data.decode())['token'] is not None
-    assert len(json.loads(response.data.decode())['token']) == 64
+    assert len(json.loads(response.data.decode())['token']) == 32
 
 def test_get_unique_tokens(client):
     """
@@ -25,13 +25,13 @@ def test_get_unique_tokens(client):
     response = client.get('/get_token')
     assert response.status == '200 OK'
     assert json.loads(response.data.decode())['token'] is not None
-    assert len(json.loads(response.data.decode())['token']) == 64
+    assert len(json.loads(response.data.decode())['token']) == 32
     t1 = json.loads(response.data.decode())['token']
 
     response = client.get('/get_token')
     assert response.status == '200 OK'
     assert json.loads(response.data.decode())['token'] is not None
-    assert len(json.loads(response.data.decode())['token']) == 64
+    assert len(json.loads(response.data.decode())['token']) == 32
     t2 = json.loads(response.data.decode())['token']
 
     assert t1 != t2

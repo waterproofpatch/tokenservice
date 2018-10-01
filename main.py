@@ -5,6 +5,8 @@ token acquisition/use service
 # standard python
 import logging
 import json
+import string
+import random
 import base64
 
 # third party libs
@@ -16,7 +18,6 @@ from flask import redirect
 import sqlalchemy
 
 # our stuff
-import utils
 import models
 
 app = Flask(__name__)
@@ -33,7 +34,7 @@ def get_token():
     Generate and return an token in json format after adding it to
     the database
     '''
-    token_string = utils.get_random_number(length=32)
+    token_string = ''.join([random.choice(string.ascii_uppercase+string.digits) for _ in range(32)])
     token = models.Token(token=token_string)
 
     models.get_db().add(token)
