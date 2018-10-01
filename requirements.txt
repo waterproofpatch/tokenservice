@@ -1,2 +1,4 @@
 flask==1.0.2
 requests==2.19.1
+sqlalchemy==1.2.12
+pylint==2.1.1
