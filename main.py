@@ -27,16 +27,13 @@ logging.basicConfig(format="%(asctime)s %(name)s %(filename)s:%(lineno)s - %(lev
 LOGGER = logging.getLogger(name="tokenservice")
 
 
-API_KEY_LEN = 32
-
-
 @app.route("/get_token", methods=['GET'])
 def get_token():
     '''
     Generate and return an token in json format after adding it to
     the database
     '''
-    token_string = utils.get_random_number(length=API_KEY_LEN)
+    token_string = utils.get_random_number(length=32)
     token = models.Token(token=token_string)
 
     models.get_db().add(token)
