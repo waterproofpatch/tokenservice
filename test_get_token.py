@@ -5,21 +5,26 @@ import json
 import pytest
 
 import main
+import models
 
 
 @pytest.fixture
 def client():
-    db_fd, main.app.config['DATABASE'] = tempfile.mkstemp()
+    try:
+        os.remove('test.sqlite3')
+    except FileNotFoundError:
+        pass
+    os.environ['TEST_DB'] = 'test.sqlite3'
+    models.init_db() 
     main.app.config['TESTING'] = True
     client = main.app.test_client()
-
-    # with main.app.app_context():
-    #    main.init_db()
-
     yield client
 
-    os.close(db_fd)
-    os.unlink(main.app.config['DATABASE'])
+    # after client is done...
+    try:
+        os.remove('test.sqlite3')
+    except FileNotFoundError:
+        pass
 
 
 def test_get_new_token(client):

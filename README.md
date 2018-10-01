@@ -21,20 +21,27 @@ pip install -r requirements.txt
 
 2. Get a token:
 
-    ```python
-    requests.get("http://127.0.0.1:5000/get_token").json()
+    ```bash
+    curl http://localhost:5000/get_token
+    ...
+    {"token":"ae74934b75b0a388bd8194aff3f565dcf2a0ca8eec980b0eddf464af55744891"}
     ```
 
 3. Put some data for a token:
 
     ```python
-    requests.post("http://127.0.0.1:5000/put", json=json.dumps({"token":"77d5e805d51b0cdc4088b1b5dde12c519241bb90e98b787023c33f63064d1774", "data":"some new data 123!"})).json()
+    curl --header "Content-Type: application/json" --data '{"token": "ae74934b75b0a388bd8194aff3f565dcf2a0ca8eec980b0eddf464af55744891", "data": "some data"}' http://localhost:5000/put
+    ...
+    {"did_insert":true}
     ```
 
 4. Get some data for a token:
 
-    ```python
-    requests.post("http://127.0.0.1:5000/poll", json=json.dumps({"token":"77d5e805d51b0cdc4088b1b5dde12c519241bb90e98b787023c33f63064d1774"})).json()
+    ```bash
+    curl --header "Content-Type: application/json" --data '{"token": "ae74934b75b0a388bd8194aff3f565dcf2a0ca8eec980b0eddf464af55744891"}' http://localhost:5000/poll
+    ...
+    "some data"
+    ```
 
 ## Test
 

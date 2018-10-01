@@ -1,11 +1,28 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+import os
 
-engine = create_engine('sqlite:///tokens.sqlite3')
+from sqlalchemy import create_engine
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
+engine = None
+session = None
 
+def init_db():
+    global Base
+    global engine
+    db_file = os.environ.get('TEST_DB', 'prod.sqlite3')
+    print("DB FILE {}".format(db_file))
+    engine = create_engine('sqlite:///{}'.format(db_file))
+    Base.metadata.create_all(engine)
+
+def get_db():
+    global session
+    if not session:
+        DBsession = sessionmaker(bind=engine)
+        session = DBsession()
+    return session
 
 class Token(Base):
     __tablename__ = 'tokens'
@@ -16,5 +33,3 @@ class Token(Base):
 
     def __repr__(self):
         return '<Token(id={}, token={}, data={})>'.format(self.id, self.token, self.data)
-
-Base.metadata.create_all(engine)

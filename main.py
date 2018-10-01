@@ -7,7 +7,6 @@ import logging
 import json
 
 # third party libs
-from sqlalchemy.orm import sessionmaker
 from flask import Flask
 from flask import render_template
 from flask import jsonify
@@ -42,8 +41,6 @@ FILE_HANDLER.setLevel(logging.ERROR)
 LOGGER.addHandler(CONSOLE_HANDLER)
 LOGGER.addHandler(FILE_HANDLER)
 
-DBsession = sessionmaker(bind=models.engine)
-session = DBsession()
 
 
 API_KEY_LEN = 32
@@ -57,8 +54,8 @@ def get_api_get():
     token_string = utils.get_random_number(length=API_KEY_LEN)
     token = models.Token(token=token_string)
 
-    session.add(token)
-    session.commit()
+    models.get_db().add(token)
+    models.get_db().commit()
 
     return jsonify({"token": token_string})
 
@@ -67,15 +64,13 @@ def put():
     '''
     Handle a put to add data for a particular token
     '''
-    token = json.loads(request.get_json())["token"]
-    data = json.loads(request.get_json())["data"]
+    token = request.get_json()["token"]
+    data = request.get_json()["data"]
 
-    LOGGER.info("Putting data {} for token {}".format(data, token))
-    token = session.query(models.Token).filter(models.Token.token==token).one()
-    LOGGER.debug("Got existing token {}".format(token))
+    token = models.get_db().query(models.Token).filter(models.Token.token==token).one()
     token.data = data
 
-    session.commit()
+    models.get_db().commit()
 
     return jsonify({"did_insert": True})
 
@@ -84,9 +79,8 @@ def poll():
     '''
     Handle a poll for data for a particular token
     '''
-    token = json.loads(request.get_json())["token"]
-    LOGGER.info("Got token {}".format(token))
-    result = session.query(models.Token).filter(models.Token.token==token).one()
+    token = request.get_json()["token"]
+    result = models.get_db().query(models.Token).filter(models.Token.token==token).one()
     return jsonify(result.data)
 
 def stop():
@@ -94,4 +88,5 @@ def stop():
     pass
 
 if __name__ == "__main__":
+    models.init_db()
     app.run()
