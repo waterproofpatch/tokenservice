@@ -5,6 +5,7 @@ token acquisition/use service
 # standard python
 import logging
 import json
+import base64
 
 # third party libs
 from flask import Flask
@@ -12,6 +13,7 @@ from flask import render_template
 from flask import jsonify
 from flask import request
 from flask import redirect
+import sqlalchemy
 
 # our stuff
 import utils
@@ -46,7 +48,7 @@ LOGGER.addHandler(FILE_HANDLER)
 API_KEY_LEN = 32
 
 @app.route("/get_token", methods=['GET'])
-def get_api_get():
+def get_token():
     '''
     Generate and return an token in json format after adding it to
     the database
@@ -67,8 +69,11 @@ def put():
     token = request.get_json()["token"]
     data = request.get_json()["data"]
 
-    token = models.get_db().query(models.Token).filter(models.Token.token==token).one()
-    token.data = data
+    try:
+        existing_token = models.get_db().query(models.Token).filter(models.Token.token==token).one()
+    except sqlalchemy.orm.exc.NoResultFound:
+        return jsonify(), 400
+    existing_token.data = base64.b64encode(data.encode())
 
     models.get_db().commit()
 
@@ -80,8 +85,14 @@ def poll():
     Handle a poll for data for a particular token
     '''
     token = request.get_json()["token"]
-    result = models.get_db().query(models.Token).filter(models.Token.token==token).one()
-    return jsonify(result.data)
+    try:
+        result = models.get_db().query(models.Token).filter(models.Token.token==token).one()
+    except sqlalchemy.orm.exc.NoResultFound:
+        return jsonify(), 400
+
+    if not result.data:
+        return jsonify()
+    return jsonify(base64.b64decode(result.data).decode())
 
 def stop():
     LOGGER.info("App stopping...")

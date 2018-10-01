@@ -1,7 +1,7 @@
 import os
 
 from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, LargeBinary
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -13,7 +13,6 @@ def init_db():
     global Base
     global engine
     db_file = os.environ.get('TEST_DB', 'prod.sqlite3')
-    print("DB FILE {}".format(db_file))
     engine = create_engine('sqlite:///{}'.format(db_file))
     Base.metadata.create_all(engine)
 
@@ -29,7 +28,7 @@ class Token(Base):
 
     id = Column(Integer, primary_key=True)
     token = Column(String)
-    data = Column(String)
+    data = Column(LargeBinary)
 
     def __repr__(self):
         return '<Token(id={}, token={}, data={})>'.format(self.id, self.token, self.data)
