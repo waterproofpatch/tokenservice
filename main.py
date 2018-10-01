@@ -22,30 +22,13 @@ import models
 app = Flask(__name__)
 
 # make a LOGGER
-LOGGER = logging.getLogger("tokenservice")
-LOGGER.setLevel(logging.INFO)
-
-# create a FORMATTER
-FORMATTER = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-# make some handlers
-CONSOLE_HANDLER = logging.StreamHandler() # by default, sys.stderr
-FILE_HANDLER = logging.FileHandler("logs.txt")
-CONSOLE_HANDLER.setFormatter(FORMATTER)
-FILE_HANDLER.setFormatter(FORMATTER)
-
-# set logging levels
-CONSOLE_HANDLER.setLevel(logging.WARNING)
-CONSOLE_HANDLER.setLevel(logging.INFO)
-FILE_HANDLER.setLevel(logging.ERROR)
-
-# add handlers to LOGGER
-LOGGER.addHandler(CONSOLE_HANDLER)
-LOGGER.addHandler(FILE_HANDLER)
-
+logging.basicConfig(format="%(asctime)s %(name)s %(filename)s:%(lineno)s - %(levelname)s - %(message)s",
+                    level=logging.DEBUG)
+LOGGER = logging.getLogger(name="tokenservice")
 
 
 API_KEY_LEN = 32
+
 
 @app.route("/get_token", methods=['GET'])
 def get_token():
@@ -61,6 +44,7 @@ def get_token():
 
     return jsonify({"token": token_string})
 
+
 @app.route("/put", methods=['POST'])
 def put():
     '''
@@ -70,7 +54,8 @@ def put():
     data = request.get_json()["data"]
 
     try:
-        existing_token = models.get_db().query(models.Token).filter(models.Token.token==token).one()
+        existing_token = models.get_db().query(
+            models.Token).filter(models.Token.token == token).one()
     except sqlalchemy.orm.exc.NoResultFound:
         return jsonify(), 400
     existing_token.data = base64.b64encode(data.encode())
@@ -79,6 +64,7 @@ def put():
 
     return jsonify({"did_insert": True})
 
+
 @app.route("/poll", methods=['POST'])
 def poll():
     '''
@@ -86,7 +72,8 @@ def poll():
     '''
     token = request.get_json()["token"]
     try:
-        result = models.get_db().query(models.Token).filter(models.Token.token==token).one()
+        result = models.get_db().query(models.Token).filter(
+            models.Token.token == token).one()
     except sqlalchemy.orm.exc.NoResultFound:
         return jsonify(), 400
 
@@ -94,9 +81,6 @@ def poll():
         return jsonify()
     return jsonify(base64.b64decode(result.data).decode())
 
-def stop():
-    LOGGER.info("App stopping...")
-    pass
 
 if __name__ == "__main__":
     models.init_db()
