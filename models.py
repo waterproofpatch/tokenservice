@@ -1,5 +1,6 @@
 import os
 
+import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, LargeBinary
 from sqlalchemy.orm import sessionmaker
@@ -12,8 +13,10 @@ session = None
 def init_db():
     global Base
     global engine
-    db_file = os.environ.get('TEST_DB', 'prod.sqlite3')
-    engine = create_engine('sqlite:///{}'.format(db_file))
+    if os.environ.get('TESTING', False):
+        engine = create_engine('sqlite://')
+    else:
+        engine = create_engine('sqlite:///prod.sqlite3')
     Base.metadata.create_all(engine)
 
 def get_db():

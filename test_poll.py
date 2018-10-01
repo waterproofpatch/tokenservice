@@ -12,15 +12,15 @@ def test_poll_valid_token(client):
     """
     Verify we get a valid response with no data for a token that does exist
     """
-    rv = client.get('/get_token')
-    assert rv.status == '200 OK'
-    assert json.loads(rv.data.decode())['token'] is not None
-    assert len(json.loads(rv.data.decode())['token']) == 64
+    response = client.get('/get_token')
+    assert response.status == '200 OK'
+    assert json.loads(response.data.decode())['token'] is not None
+    assert len(json.loads(response.data.decode())['token']) == 64
 
     # verify that there is nothing there for this token
-    rv = client.post('/poll', json={"token": json.loads(rv.data.decode())["token"]})
-    assert rv.status == '200 OK'
-    assert json.loads(rv.data.decode()) == {}
+    response = client.post('/poll', json={"token": json.loads(response.data.decode())["token"]})
+    assert response.status == '200 OK'
+    assert json.loads(response.data.decode()) == {}
 
 def test_poll_invalid_token(client):
     """
