@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, LargeBinary
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from main import app
 
 Base = declarative_base()
 engine = None
@@ -13,7 +14,8 @@ session = None
 def init_db():
     global Base
     global engine
-    if os.environ.get('TESTING', False):
+    # use an in-memory sqlite DB for test
+    if app.config['TESTING']:
         engine = create_engine('sqlite://')
     else:
         engine = create_engine('sqlite:///prod.sqlite3')
